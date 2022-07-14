@@ -1,0 +1,24 @@
+{{ define "main" }}
+
+  {{ $imagePath:= "" }}
+  {{ with .Params.images }}
+    {{ $imagePath = index . 0 }} 
+  {{ end }}
+  {{ if $imagePath }}
+    {{ $image := (partial "functions/get-image.html" (dict "Page" . "Destination" $imagePath)) }}
+    {{ $imageFallback:= $image.Resize "1400x q75" }}
+    {{ $imageXL:= $image.Resize "1400x webp q50" }}
+    {{ $imageLG:= $image.Resize "1000x webp q50" }}
+    {{ $imageMD:= $image.Resize "800x webp q50" }}
+    {{ $imageSM:= $image.Resize "600x webp q50" }}
+    <picture>
+      <source srcset="{{ $imageSM.RelPermalink }}" media="(max-width: 575px)" />
+      <source srcset="{{ $imageMD.RelPermalink }}" media="(max-width: 767px)" />
+      <source srcset="{{ $imageLG.RelPermalink }}" media="(max-width: 992px)" />
+      <source srcset="{{ $imageXL.RelPermalink }}" />
+      <img src="{{ $imageFallback.RelPermalink }}" alt="{{ $image.Params.alt }}" title="{{ $image.Title }}" width="{{ $image.Width }}" height="{{ $image.Height }}" />
+    </picture>
+  {{ end }}
+  {{ .Content }}
+
+{{ end }}

@@ -1,0 +1,7 @@
+{{ if (isset . "foo") }}
+  {{ warnf "isset path" }}
+{{ end }}
+
+{{ with .foo }}
+  {{ warnf "with path" }}
+{{ end }}
