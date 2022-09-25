@@ -7,7 +7,11 @@
 
   {{ $css := resources.Get "css/custom.css" | resources.PostCSS }}
 
-    <link
+  {{ if hugo.IsProduction }}
+    {{ $css = $css | minify | fingerprint "sha256" | resources.PostProcess }}
+  {{ end }}
+
+  <link
   rel="stylesheet"
   href="{{ $css.RelPermalink }}"
   crossorigin="anonymous"
