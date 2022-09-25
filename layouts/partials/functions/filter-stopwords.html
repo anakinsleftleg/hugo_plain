@@ -1,0 +1,17 @@
+{{/* Input arg is a dict with: */}}
+{{/* .String (input string requiring filtering) */}}
+{{/* .Delimiter (string use to recombine words into output string) */}}
+
+{{/* Unescape possibly html escaped characters, convert to lowercase,
+  filter out sentence punctuation with regex (leaves dash, plus, and apostrophe),
+  and replace rendered apostrophe (single right quote) with standard one */}}
+{{ $filteredString := trim (replaceRE "[^\\w+'-]+" " " (replaceRE "’" "'" (.String | htmlUnescape | lower))) " " }}
+{{/* Split the filtered string into a slice array using whitespace */}}
+{{ $stringArray := split $filteredString " " }}
+{{/* Load list of stopwords as a slice array */}}
+{{ $sw := site.Data.stopwords }}
+{{/* Compare string words to stopwords and return only non-matches */}}
+{{ $filteredArray :=  complement $sw $stringArray }}
+{{/* Return a string from the filtered words separated by spaces and remove
+  possessive 's */}}
+{{ replace (delimit $filteredArray .Delimiter) "'s" "" }}
